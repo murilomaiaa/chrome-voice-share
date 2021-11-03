@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recorder</title>
+  <link rel="stylesheet" href="page.css">
+  <style>
+    h1 {
+      font-size: 24px;
+    }
+
+    .button {
+      border: none;
+      padding: 5px;
+    }
+    
+    .button:hover {
+      cursor: pointer;
+      border: 1px #dad;
+    }
+  </style>
+  <script src="page.js" defer type="text/javascript"></script>
+</head>
+<body>
+  <h1>Record your voice</h1>
+  <button class="button" id="startButton" type="button">
+    <img id="buttonImage" src="assets/start.png" alt="Start recording" width="20px" height="20px">
+  </button>
+  <button class="button" id="stopButton" type="button">
+    <img id="buttonImage" src="assets/stop.png" alt="Stop recording" width="20px" height="20px">
+  </button>
+
+  <audio controls></audio>
+</body>
+</html>
