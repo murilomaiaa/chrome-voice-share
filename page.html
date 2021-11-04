@@ -24,14 +24,20 @@
   <script src="page.js" defer type="text/javascript"></script>
 </head>
 <body>
-  <h1>Record your voice</h1>
-  <button class="button" id="startButton" type="button">
-    <img id="buttonImage" src="assets/start.png" alt="Start recording" width="20px" height="20px">
-  </button>
-  <button class="button" id="stopButton" type="button">
-    <img id="buttonImage" src="assets/stop.png" alt="Stop recording" width="20px" height="20px">
-  </button>
+  <div id="player">
+    <h4>Record your voice</h4>
+    <div class="card">
+      <div id="buttons">
+        <button class="button" id="startButton" type="button">
+          <img id="buttonImage" src="assets/start.png" alt="Start recording" width="20px" height="20px">
+        </button>
+        <button class="button" id="stopButton" type="button">
+          <img id="buttonImage" src="assets/stop.png" alt="Stop recording" width="20px" height="20px">
+        </button>
+        <p id="recordingStatus">Stopped</p>
+      </div>
+    </div>
+  </div>
 
-  <audio controls></audio>
 </body>
 </html>

@@ -9,16 +9,18 @@ if (navigator.mediaDevices) {
     const mediaRecorder = new MediaRecorder(stream);
     const startButton = document.getElementById('startButton')
     const stopButton = document.getElementById('stopButton')
-    const audioPlayer = document.getElementById('audioPlayer')
     let chunks = []
     
     startButton.addEventListener('click', function(e) {
       mediaRecorder.start()
+      changeTextStatus()
       console.log('mediaRecorder.state: ', mediaRecorder.state)
     })
     
     stopButton.addEventListener('click', function(e) {
       mediaRecorder.stop()
+      changeTextStatus()
+      addAudioPlayer()
       console.log('mediaRecorder.state: ', mediaRecorder.state)
     })
 
@@ -39,14 +41,25 @@ if (navigator.mediaDevices) {
   })
 }
 
-// function changeButtonAttributes() {
-//   const imagesUrl = { [true]:'assets/start.png', [false]: 'assets/stop.png' }
-//   const image = document.getElementById('buttonImage')
-//   const imageUrl = image.getAttribute('src')
+function changeTextStatus() {
+  const isRecordingText = { [true]: 'Recording', [false]: 'Stopped' }
+  const p = document.getElementById('recordingStatus')
 
-//   if(imageUrl === imagesUrl[true]) {
-//     image.setAttribute('src', imagesUrl[false])
-//   } else {
-//     image.setAttribute('src', imagesUrl[true])
-//   }
-// }
+  if(p.textContent === isRecordingText[true]) {
+    p.textContent = isRecordingText[false]
+  } else {
+    p.textContent = isRecordingText[true]
+  }
+}
+
+function addAudioPlayer() {
+  const card = document.querySelector('div.card')
+  let audio = document.querySelector('audio')
+
+  if(!audio) {
+    audio = document.createElement('audio')
+    audio.controls = true
+  
+    card.appendChild(audio)
+  }
+}
