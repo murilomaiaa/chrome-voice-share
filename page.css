@@ -13,6 +13,9 @@ body {
 .button {
   margin: 4px;
   border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .button:hover { 
@@ -21,7 +24,12 @@ body {
 
 div#buttons {
   display: flex;
+  align-items: center;
   margin-bottom: 8px;
+}
+
+p#recordingStatus {
+  margin-bottom: 0px;
 }
 
 #player {
