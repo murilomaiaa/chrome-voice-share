@@ -1,8 +1,7 @@
 if (navigator.mediaDevices) {
-  console.log('getUserMedia supported.');
+  console.log('getUserMedia supported.')
 
-  var constraints = { audio: true };
-  var chunks = [];
+  const constraints = { audio: true }
 
   navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
@@ -20,7 +19,6 @@ if (navigator.mediaDevices) {
     stopButton.addEventListener('click', function(e) {
       mediaRecorder.stop()
       changeTextStatus()
-      addAudioPlayer()
       console.log('mediaRecorder.state: ', mediaRecorder.state)
     })
 
@@ -28,8 +26,11 @@ if (navigator.mediaDevices) {
       const blob = new Blob(chunks, { type: 'audio/ogg' })
       chunks = []
       let audioUrl = window.URL.createObjectURL(blob)
-      const player = document.querySelector('audio')
-      player.src = audioUrl
+      fetchAudio(blob).then(id=>{
+        addAudioPlayer(audioUrl)
+
+        showShareLink(id)
+      })
     }
 
     mediaRecorder.ondataavailable = function(e) {
@@ -37,12 +38,66 @@ if (navigator.mediaDevices) {
     }
   })
   .catch(function(err) {
-    console.log('The following error occurred: ' + err.stack);
+    console.log('The following error occurred: ' + err.stack)
   })
 }
 
+function showShareLink(id) {
+  const card = document.getElementById('card')
+  let div = document.getElementById('clipContainer')
+
+  if(!div) {
+    div = document.createElement('div')
+  
+    const p = document.createElement('p')
+    p.textContent='Compartilhe esse audio:'
+    div.appendChild(p)
+
+    div.appendChild(document.createElement('a'))
+  
+    card.appendChild(div)
+  }
+  const endpoint = 'https://voice-notes-alpha.vercel.app/api/record/'
+  const url = endpoint + id
+  const htmlAudioUrl = document.querySelector('a')
+  htmlAudioUrl.setAttribute('href', url)
+  htmlAudioUrl.textContent = url
+
+  const button = document.createElement('button')
+  button.setAttribute('class', 'button')
+  button.setAttribute('id', 'clip')
+  button.setAttribute('data-clipboard-action', 'copy')
+  button.setAttribute('data-clipboard-target', 'a')
+  button.textContent = 'Copiar'
+  card.appendChild(button)
+  
+  const clipboard = new ClipboardJS('#clip')
+  clipboard.on('success', function(e) {
+    const  oldBtnClass = button.getAttribute('class')
+    const btnClass = oldBtnClass + ' tooltipped tooltipped-s'
+    button.setAttribute('class', btnClass)
+    button.setAttribute('aria-label', 'Copiado!')
+    e.clearSelection();
+    setTimeout(()=> removeTooltipClass(button, oldBtnClass), 5000)
+});
+}
+
+function removeTooltipClass(button, className) {
+  button.setAttribute('class', className)
+}
+
+async function fetchAudio(blob) {
+  const endpoint = 'http://localhost:3000/api/record'
+  const formData = new FormData()
+  formData.append('audio', blob, 'audio' + Math.random() + '.ogg')
+
+  const { data } = await axios.post(endpoint, formData)
+
+  return data.id
+}
+
 function changeTextStatus() {
-  const isRecordingText = { [true]: 'Recording', [false]: 'Stopped' }
+  const isRecordingText = { [true]: 'Gravando', [false]: 'Parado' }
   const p = document.getElementById('recordingStatus')
 
   if(p.textContent === isRecordingText[true]) {
@@ -52,7 +107,7 @@ function changeTextStatus() {
   }
 }
 
-function addAudioPlayer() {
+function addAudioPlayer(audioUrl = '') {
   const card = document.querySelector('div.card')
   let audio = document.querySelector('audio')
 
@@ -62,4 +117,7 @@ function addAudioPlayer() {
   
     card.appendChild(audio)
   }
+
+  const player = document.querySelector('audio')
+  player.src = audioUrl
 }
