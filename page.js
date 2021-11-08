@@ -58,6 +58,7 @@ function showShareLink(id) {
   
     card.appendChild(div)
   }
+
   const endpoint = 'https://voice-notes-alpha.vercel.app/api/record/'
   const url = endpoint + id
   const htmlAudioUrl = document.querySelector('a')
@@ -88,7 +89,7 @@ function removeTooltipClass(button, className) {
 }
 
 async function fetchAudio(blob) {
-  const endpoint = 'http://localhost:3000/api/record'
+  const endpoint = 'https://voice-notes-alpha.vercel.app/api/record/'
   const formData = new FormData()
   formData.append('audio', blob, 'audio' + Math.random() + '.ogg')
 
