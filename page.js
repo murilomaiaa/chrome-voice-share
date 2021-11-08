@@ -48,6 +48,7 @@ function showShareLink(id) {
 
   if(!div) {
     div = document.createElement('div')
+    div.setAttribute('id', 'clipContainer')
   
     const p = document.createElement('p')
     p.textContent='Compartilhe esse audio:'
