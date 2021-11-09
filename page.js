@@ -56,23 +56,23 @@ function showShareLink(id) {
 
     div.appendChild(document.createElement('a'))
   
+    const button = document.createElement('button')
+    button.setAttribute('class', 'button')
+    button.setAttribute('id', 'clip')
+    button.setAttribute('data-clipboard-action', 'copy')
+    button.setAttribute('data-clipboard-target', 'a')
+    button.textContent = 'Copiar'
+    div.appendChild(button)
+  
     card.appendChild(div)
   }
 
   const endpoint = getEndpoint()
-  const url = endpoint + id
+  const url = endpoint + '/' + id
   const htmlAudioUrl = document.querySelector('a')
   htmlAudioUrl.setAttribute('href', url)
   htmlAudioUrl.textContent = url
 
-  const button = document.createElement('button')
-  button.setAttribute('class', 'button')
-  button.setAttribute('id', 'clip')
-  button.setAttribute('data-clipboard-action', 'copy')
-  button.setAttribute('data-clipboard-target', 'a')
-  button.textContent = 'Copiar'
-  card.appendChild(button)
-  
   const clipboard = new ClipboardJS('#clip')
   clipboard.on('success', function(e) {
     const  oldBtnClass = button.getAttribute('class')
