@@ -67,8 +67,8 @@ function showShareLink(id) {
     card.appendChild(div)
   }
 
-  const endpoint = getEndpoint()
-  const url = endpoint + '/' + id
+  const url = getListenRecordUrl(id)
+  
   const htmlAudioUrl = document.querySelector('a')
   htmlAudioUrl.setAttribute('href', url)
   htmlAudioUrl.textContent = url
