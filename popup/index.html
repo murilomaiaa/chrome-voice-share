@@ -5,27 +5,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recorder</title>
-  <link rel="stylesheet" href="page.css">
   <link href="https://unpkg.com/@primer/css@^16.0.0/dist/primer.css" rel="stylesheet" />
-  <style>
-    h1 {
-      font-size: 24px;
-    }
-
-    .button {
-      border: none;
-      padding: 5px;
-    }
-    
-    .button:hover {
-      cursor: pointer;
-      border: 10px #dad;
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+  <link rel="stylesheet" href="style.css">
   <script src="js/clipboard.min.js" defer></script>
   <script src="js/env.js" defer></script>
-  <script src="page.js" defer type="text/javascript"></script>
+  <script src="js/script.js" defer type="text/javascript"></script>
 </head>
 <body>
   <div id="player">
@@ -34,11 +18,11 @@
       <div id="buttons">
         <button class="button" id="startButton" type="button">
           Gravar 
-          <img id="buttonImage" src="assets/start.png" alt="Start recording" width="20px" height="20px">
+          <img id="buttonImage" src="../assets/start.png" alt="Start recording" width="20px" height="20px">
         </button>
         <button class="button" id="stopButton" type="button">
           Parar 
-          <img id="buttonImage" src="assets/stop.png" alt="Stop recording" width="20px" height="20px">
+          <img id="buttonImage" src="../assets/stop.png" alt="Stop recording" width="20px" height="20px">
         </button>
         <p id="recordingStatus">Parado</p>
       </div>
