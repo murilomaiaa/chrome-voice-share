@@ -1,5 +1,3 @@
-console.log('load')
-
 if (navigator.mediaDevices) {
   console.log('getUserMedia supported.')
 
@@ -14,24 +12,27 @@ if (navigator.mediaDevices) {
     
     startButton.addEventListener('click', function(e) {
       mediaRecorder.start()
-      changeTextStatus()
-      console.log('mediaRecorder.state: ', mediaRecorder.state)
+      changeTextStatus('Gravando')
     })
     
     stopButton.addEventListener('click', function(e) {
       mediaRecorder.stop()
-      changeTextStatus()
-      console.log('mediaRecorder.state: ', mediaRecorder.state)
+      changeTextStatus('Salvando...')
     })
 
     mediaRecorder.onstop = function(e) {
       const blob = new Blob(chunks, { type: 'audio/ogg' })
       chunks = []
-      let audioUrl = window.URL.createObjectURL(blob)
-      fetchAudio(blob).then(id=>{
-        addAudioPlayer(audioUrl)
+      fetchAudio(blob).then(id => {
+        changeTextStatus('Parado')
+        addAudioPlayer(blob)
 
-        showShareLink(id)
+        const url = getListenRecordUrl(id)
+        const card = document.getElementById('card')
+
+        const tooltip = addTooltip(card, splitUrl(url))
+        copyUrlToClipboard(card, url)
+        setTimeout(() => card.removeChild(tooltip), 5000)
       })
     }
 
@@ -44,51 +45,56 @@ if (navigator.mediaDevices) {
   })
 }
 
-function showShareLink(id) {
-  const card = document.getElementById('card')
-  let div = document.getElementById('clipContainer')
+function splitUrl(url = '') {
+  const sorted = []
 
-  if(!div) {
-    div = document.createElement('div')
-    div.setAttribute('id', 'clipContainer')
-  
-    const p = document.createElement('p')
-    p.textContent='Compartilhe esse audio:'
-    div.appendChild(p)
-
-    div.appendChild(document.createElement('a'))
-  
-    const button = document.createElement('button')
-    button.setAttribute('class', 'button')
-    button.setAttribute('id', 'clip')
-    button.setAttribute('data-clipboard-action', 'copy')
-    button.setAttribute('data-clipboard-target', 'a')
-    button.textContent = 'Copiar'
-    div.appendChild(button)
-  
-    card.appendChild(div)
+  for (let i = url.length - 1;  i >= 0; i--) {
+    sorted.push(url[i])
   }
 
-  const url = getListenRecordUrl(id)
-  
-  const htmlAudioUrl = document.querySelector('a')
-  htmlAudioUrl.setAttribute('href', url)
-  htmlAudioUrl.textContent = url
+  const slashIndex = sorted.indexOf('/')
 
-  const clipboard = new ClipboardJS('#clip')
-  clipboard.on('success', function(e) {
-    const button = document.getElementById('clip')
-    const oldBtnClass = button.getAttribute('class')
-    const btnClass = oldBtnClass + ' tooltipped tooltipped-s'
-    button.setAttribute('class', btnClass)
-    button.setAttribute('aria-label', 'Copiado!')
-    e.clearSelection();
-    setTimeout(()=> removeTooltipClass(button, oldBtnClass), 5000)
-  });
+  const splittedUrl = {
+    first: ['\n',...sorted.slice(slashIndex)].sort(()=> -1).join(''),
+    second: sorted.slice(0, slashIndex).sort(()=> -1).join(''), 
+  }
+
+  return splittedUrl.first + splittedUrl.second
 }
 
-function removeTooltipClass(button, className) {
-  button.setAttribute('class', className)
+const addTooltip = (card, url) => {
+  const message = document.createElement('span')
+  message.setAttribute('class', 'message')
+  message.textContent = 'Link copiado para a área de transferência'
+
+  const br = document.createElement('br')
+
+  const urlSpan = document.createElement('span')
+  urlSpan.setAttribute('class', 'url')
+  urlSpan.setAttribute('id', 'url')
+  urlSpan.textContent = url
+
+  const tooltip = document.createElement('div')
+  tooltip.setAttribute('class', 'tooltip')
+  tooltip.append(message, br, urlSpan)
+
+  card.append(tooltip)
+
+  return tooltip
+}
+
+function copyUrlToClipboard(card, url) {
+  const button = document.createElement('button')
+  button.setAttribute('id', 'clip')
+  button.setAttribute('data-clipboard-action', 'copy')
+  button.setAttribute('data-clipboard-text', url)
+  button.textContent = 'Copiar'
+
+  card.append(button)
+
+  new ClipboardJS('#clip')
+  button.click()
+  card.removeChild(button)
 }
 
 async function fetchAudio(blob) {
@@ -99,33 +105,26 @@ async function fetchAudio(blob) {
   const response = await fetch(endpoint, { body: formData, method: 'POST' })
   const data = await response.json()
 
-  console.log({data})
-
   return data.id
 }
 
-function changeTextStatus() {
-  const isRecordingText = { [true]: 'Gravando', [false]: 'Parado' }
+function changeTextStatus(status) {
   const p = document.getElementById('recordingStatus')
-
-  if(p.textContent === isRecordingText[true]) {
-    p.textContent = isRecordingText[false]
-  } else {
-    p.textContent = isRecordingText[true]
-  }
+  p.textContent = status
 }
 
-function addAudioPlayer(audioUrl = '') {
+function addAudioPlayer(blob) {
   const card = document.querySelector('div.card')
   let audio = document.querySelector('audio')
 
   if(!audio) {
     audio = document.createElement('audio')
     audio.controls = true
-  
+
     card.appendChild(audio)
   }
 
   const player = document.querySelector('audio')
+  const audioUrl = window.URL.createObjectURL(blob)
   player.src = audioUrl
 }
