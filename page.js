@@ -93,9 +93,16 @@ async function fetchAudio(blob) {
   const formData = new FormData()
   formData.append('audio', blob, 'audio' + Math.random() + '.ogg')
 
-  const { data } = await axios.post(endpoint, formData)
+  const response = await fetch(endpoint, { body: formData, method: 'POST' })
+  const data = await response.json()
 
-  return data.id
+  let id = ''
+
+  if (data.id) {
+    id = data.id
+  }
+
+  return id
 }
 
 function changeTextStatus() {
